@@ -6,3 +6,7 @@ prefix: cheetah
 
 main: studio.o7.cheetah.plugin.CheetahPlugin
 load: STARTUP
+
+depend:
+  - Octopus
+  - Floodgate
