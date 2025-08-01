@@ -3,7 +3,10 @@
   "image": "ubuntu:latest",
   "customizations" : {
     "jetbrains" : {
-      "backend" : "IntelliJ"
+      "backend" : "IntelliJ",
+      "plugins": [
+        "com.demonwav.minecraft-dev"
+      ]
     }
   },
   "features": {

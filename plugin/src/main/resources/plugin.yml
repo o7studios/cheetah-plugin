@@ -1,0 +1,8 @@
+name: Cheetah
+version: 0.0.0
+description: Cheetah paper plugin
+author: o7studios
+prefix: cheetah
+
+main: studio.o7.cheetah.plugin.CheetahPlugin
+load: STARTUP
