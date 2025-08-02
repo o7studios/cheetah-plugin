@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * {@link Device} is the type of possible devices a Bedrock player can play on.
+ */
 @RequiredArgsConstructor
 @Getter
 public enum Device {

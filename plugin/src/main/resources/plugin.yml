@@ -3,10 +3,21 @@ version: 0.0.0
 description: Cheetah paper plugin
 author: o7studios
 prefix: cheetah
+api-version: "1.21.8"
 
 main: studio.o7.cheetah.plugin.CheetahPlugin
 load: STARTUP
 
-depend:
-  - Octopus
-  - Floodgate
+#depend:
+#  - Octopus
+#  - Floodgate
+
+permissions:
+  cheetah.server:
+    description: "Cheetah Server CTRL permissions"
+    default: op
+    children:
+      cheetah.server.info: true
+      cheetah.server.jump: true
+      cheetah.server.stop: true
+      cheetah.server.send: true
