@@ -27,7 +27,7 @@ public final class ProxyServerPreConnectEvent extends ProxyPlayerEvent {
     @Nullable
     private ProxyServer server;
 
-    public ProxyServerPreConnectEvent(@NonNull ProxyPlayer player, @NonNull ProxyServer original, @Nullable ProxyServer previousServer, @NonNull ProxyServer server) {
+    public ProxyServerPreConnectEvent(@NonNull ProxyPlayer player, @NonNull ProxyServer original, @Nullable ProxyServer previousServer, @Nullable ProxyServer server) {
         super(player);
         this.original = original;
         this.previousServer = previousServer;

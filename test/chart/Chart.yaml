@@ -1,0 +1,8 @@
+apiVersion: v2
+type: application
+name: cheetah-test-chart
+version: 0.0.0
+appVersion: 0.0.0
+description: o7.studio cheetah-plugin testing chart
+sources:
+  - https://github.com/o7studios/cheetah-plugin
