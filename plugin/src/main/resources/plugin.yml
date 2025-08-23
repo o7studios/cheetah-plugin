@@ -8,9 +8,9 @@ api-version: "1.21.8"
 main: studio.o7.cheetah.plugin.CheetahPlugin
 load: STARTUP
 
-#depend:
-#  - Octopus
-#  - Floodgate
+depend:
+  - Octopus
+  - floodgate
 
 permissions:
   cheetah.server:

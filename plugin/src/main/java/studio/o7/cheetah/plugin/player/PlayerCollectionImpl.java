@@ -54,6 +54,7 @@ public final class PlayerCollectionImpl implements ProxyPlayerCollection, org.bu
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
         var uuid = event.getPlayer().getUniqueId();
         var holder = getByUUID(uuid);
+        if (holder == null) return;
         holder.gc();
     }
 

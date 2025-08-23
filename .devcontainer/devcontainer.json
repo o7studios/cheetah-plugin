@@ -5,7 +5,8 @@
     "jetbrains" : {
       "backend" : "IntelliJ",
       "plugins": [
-        "com.demonwav.minecraft-dev"
+        "com.demonwav.minecraft-dev",
+        "org.jetbrains.plugins.go-template"
       ]
     }
   },
@@ -15,7 +16,7 @@
     "ghcr.io/rio/features/k3d:1": {},
     "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {},
     "ghcr.io/devcontainers/features/java:1": {
-      "version": "21.0.7",
+      "version": "23",
       "installGradle": true
     }
   },
