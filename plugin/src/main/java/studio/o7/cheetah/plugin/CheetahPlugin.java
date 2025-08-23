@@ -3,6 +3,7 @@ package studio.o7.cheetah.plugin;
 import io.papermc.paper.plugin.lifecycle.event.LifecycleEventManager;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -21,6 +22,11 @@ public final class CheetahPlugin extends JavaPlugin implements PluginInstance {
     @Override
     public void onEnable() {
         cheetah = new CheetahImpl();
+
+        var pm = Bukkit.getPluginManager();
+
+        pm.registerEvents(CheetahImpl.PLAYER_COLLECTION, this);
+
         LifecycleEventManager<@NotNull Plugin> lifecycleManager = getLifecycleManager();
 
         lifecycleManager.registerEventHandler(LifecycleEvents.COMMANDS, commands -> {

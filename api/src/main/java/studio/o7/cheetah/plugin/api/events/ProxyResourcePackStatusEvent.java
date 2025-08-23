@@ -28,10 +28,11 @@ public final class ProxyResourcePackStatusEvent extends ProxyPlayerEvent {
 
     private boolean overrideKick = false;
 
-    public ProxyResourcePackStatusEvent(@NonNull ProxyPlayer player, @NonNull PackStatus status, @NonNull ResourcePackInfo info) {
+    public ProxyResourcePackStatusEvent(@NonNull ProxyPlayer player, @NonNull PackStatus status, @NonNull ResourcePackInfo info, boolean overrideKick) {
         super(player);
         this.status = status;
         this.info = info;
+        this.overrideKick = overrideKick;
     }
 
     @Override

@@ -24,10 +24,11 @@ public final class ProxyPreTransferEvent extends ProxyPlayerEvent {
 
     private boolean denied = true;
 
-    public ProxyPreTransferEvent(@NonNull ProxyPlayer player, @NonNull InetSocketAddress originalAddr, @NonNull InetSocketAddress targetAddr) {
+    public ProxyPreTransferEvent(@NonNull ProxyPlayer player, @NonNull InetSocketAddress originalAddr, @NonNull InetSocketAddress targetAddr, boolean denied) {
         super(player);
         this.originalAddr = originalAddr;
         this.targetAddr = targetAddr;
+        this.denied = denied;
     }
 
     @Override

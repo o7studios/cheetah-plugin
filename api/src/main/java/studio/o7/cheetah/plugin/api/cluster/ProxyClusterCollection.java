@@ -7,9 +7,5 @@ import java.util.Optional;
 
 public interface ProxyClusterCollection extends Collection<ProxyCluster> {
 
-    default Optional<ProxyCluster> getById(@NonNull String id) {
-        return stream()
-                .filter(cluster -> cluster.getId().equalsIgnoreCase(id))
-                .findAny();
-    }
+    Optional<ProxyCluster> getById(@NonNull String id);
 }
