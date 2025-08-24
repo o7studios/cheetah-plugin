@@ -1,5 +1,5 @@
 dependencies {
-    compileOnlyApi("studio.o7:octopus-plugin-api:1.0.0")
+    compileOnlyApi("studio.o7:octopus-plugin-api:1.0.2")
 }
 
 information {

@@ -18,7 +18,7 @@ fi
 
 mkdir plugins
 curl -L -o ./plugins/viaversion.jar https://hangarcdn.papermc.io/plugins/ViaVersion/ViaVersion/versions/5.4.2/PAPER/ViaVersion-5.4.2.jar
-curl -L -o ./plugins/octopus.jar https://github.com/o7studios/octopus-plugin/releases/download/v1.0.1/octopus-plugin-all.jar
+curl -L -o ./plugins/octopus.jar https://github.com/o7studios/octopus-plugin/releases/download/v1.0.3/octopus-plugin-all.jar
 
 PROJECT="floodgate"
 VERSION="2.2.4"
