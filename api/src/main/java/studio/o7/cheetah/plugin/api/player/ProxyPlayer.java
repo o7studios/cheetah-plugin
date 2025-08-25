@@ -1,5 +1,7 @@
 package studio.o7.cheetah.plugin.api.player;
 
+import lombok.NonNull;
+import net.kyori.adventure.text.Component;
 import studio.o7.cheetah.plugin.api.cluster.ProxyCluster;
 import studio.o7.cheetah.plugin.api.player.bedrock.Device;
 import studio.o7.cheetah.plugin.api.server.ProxyServer;
@@ -18,6 +20,10 @@ import java.util.UUID;
  */
 public interface ProxyPlayer {
 
+    boolean disconnect(@NonNull Component reason);
+
+    Optional<ConnectionStatus> send(@NonNull ProxyServer server);
+
     String getUsername();
 
     /**
@@ -33,7 +39,7 @@ public interface ProxyPlayer {
      * Returns the Bedrock Edition players Xbox Unique id
      * or Empty if the player's on Java Edition.
      */
-    Optional<String> getXboxUniqueId();
+    Optional<Long> getXboxUniqueId();
 
     /**
      * The latest device the Bedrock player has been playing on or

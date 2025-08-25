@@ -1,12 +1,13 @@
-name: Cheetah
-version: 0.0.0
-description: Cheetah paper plugin
-author: o7studios
-prefix: cheetah
+name: "Cheetah"
+version: "0.0.0"
+description: "Plugin for Cheetah Minecraft Java & Bedrock Edition Gate-based Reverse Proxy service"
+author: "o7studios"
+prefix: "cheetah"
+
 api-version: "1.21.8"
 
-main: studio.o7.cheetah.plugin.CheetahPlugin
-load: STARTUP
+main: "studio.o7.cheetah.plugin.CheetahPlugin"
+load: "STARTUP"
 
 depend:
   - Octopus

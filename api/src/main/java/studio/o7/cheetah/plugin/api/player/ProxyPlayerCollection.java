@@ -12,5 +12,5 @@ public interface ProxyPlayerCollection extends Collection<ProxyPlayer> {
 
     Optional<ProxyPlayer> getByUniqueId(@NonNull UUID uuid);
 
-    Optional<ProxyPlayer> getByXboxUniqueId(@NonNull String xuid);
+    Optional<ProxyPlayer> getByXboxUniqueId(long xuid);
 }

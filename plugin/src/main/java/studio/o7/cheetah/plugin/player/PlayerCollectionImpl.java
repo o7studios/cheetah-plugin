@@ -64,7 +64,7 @@ public final class PlayerCollectionImpl implements ProxyPlayerCollection, org.bu
         private final Listener listener;
 
         private PlayerHolder(@NonNull Struct struct) throws IOException {
-            var player = PlayerImpl.create(struct);
+            var player = PlayerImpl.createPlayer(struct);
             this.playerRef = new WeakReference<>(player);
             this.listener = new Listener("cheetah.player." + player.getUuid(), 0) {
                 @SneakyThrows
@@ -75,7 +75,7 @@ public final class PlayerCollectionImpl implements ProxyPlayerCollection, org.bu
                         gc();
                         return;
                     }
-                    PlayerImpl.update(player, object.getData());
+                    PlayerImpl.updatePlayer(player, object.getData());
                 }
             };
             Octopus.get().registerListener(listener);
@@ -92,7 +92,7 @@ public final class PlayerCollectionImpl implements ProxyPlayerCollection, org.bu
         }
     }
 
-    private static PlayerHolder query(@NonNull String something) {
+    private static PlayerHolder query(@NonNull Object something) {
         return Octopus.get().get("cheetah.player." + something)
                 .stream()
                 .map(entry -> {
@@ -120,13 +120,13 @@ public final class PlayerCollectionImpl implements ProxyPlayerCollection, org.bu
                 }).findAny().orElse(null);
     }
 
-    private static PlayerHolder getByXuid(@NonNull String name) {
+    private static PlayerHolder getByXuid(long id) {
         return HOLDERS.stream()
                 .filter(holder -> {
                     if (holder.get().isEmpty()) return false;
                     var xuid = holder.get().get().getXboxUniqueId().orElse(null);
                     if (xuid == null) return false;
-                    return xuid.equalsIgnoreCase(name);
+                    return xuid == id;
                 }).findAny().orElse(null);
     }
 
@@ -160,7 +160,7 @@ public final class PlayerCollectionImpl implements ProxyPlayerCollection, org.bu
     }
 
     @Override
-    public Optional<ProxyPlayer> getByXboxUniqueId(@NonNull String xuid) {
+    public Optional<ProxyPlayer> getByXboxUniqueId(long xuid) {
         var holder = getByXuid(xuid);
         if (holder == null) {
             var newHolder = query(xuid);

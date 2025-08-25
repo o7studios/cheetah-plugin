@@ -43,6 +43,17 @@ if ! kubectl get secret ghcr-secret >/dev/null 2>&1; then
   echo "✅ Created secret for docker-registry on K3d cluster $TEST_CLUSTER_NAME."
 fi
 
+if ! helm list | grep -q octopus; then
+  echo "📦 Octopus not installed on K3d cluster $TEST_CLUSTER_NAME. Installing it..."
+  echo $GITHUB_TOKEN | helm registry login ghcr.io -u $GITHUB_USERNAME --password-stdin
+  helm install octopus oci://ghcr.io/o7studios/octopus-chart --set tls.disabled=true
+  echo "✅ Octopus installed on K3d cluster $TEST_CLUSTER_NAME."
+  sleep 3s
+  echo "⏳ Waiting until Octopus is ready on K3d cluster $TEST_CLUSTER_NAME..."
+  kubectl wait --for=condition=Ready pod -l app.kubernetes.io/instance=octopus-chart --timeout=240s
+  echo "✅ Octopus is ready on K3d cluster $TEST_CLUSTER_NAME."
+fi
+
 gradle shadowJar
 
 IMAGE_NAME=ctest

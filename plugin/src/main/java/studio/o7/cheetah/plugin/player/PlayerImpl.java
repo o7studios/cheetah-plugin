@@ -7,9 +7,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import net.kyori.adventure.text.Component;
 import studio.o7.cheetah.plugin.api.Cheetah;
 import studio.o7.cheetah.plugin.api.cluster.ProxyCluster;
 import studio.o7.cheetah.plugin.api.player.Blockage;
+import studio.o7.cheetah.plugin.api.player.ConnectionStatus;
 import studio.o7.cheetah.plugin.api.player.ProxyPlayer;
 import studio.o7.cheetah.plugin.api.player.bedrock.Device;
 import studio.o7.cheetah.plugin.api.server.ProxyServer;
@@ -26,7 +28,7 @@ public final class PlayerImpl implements ProxyPlayer {
     private final UUID uuid;
     private final Collection<Blockage> blockages = new ObjectArraySet<>();
     private String username;
-    private String xuid;
+    private long xuid;
     private Device device;
     private String currentServerId;
     private String currentClusterId;
@@ -35,7 +37,7 @@ public final class PlayerImpl implements ProxyPlayer {
     public static final class PlayerStruct extends ProtoStruct {
         private final UUID uuid;
         private final String username;
-        private final String xuid;
+        private final long xuid;
         private final String device;
         @SerializedName("current_server_id")
         private final String currentServerId;
@@ -43,24 +45,34 @@ public final class PlayerImpl implements ProxyPlayer {
         private final String currentClusterId;
     }
 
-    public static PlayerImpl create(@NonNull Struct struct) throws IOException {
+    public static PlayerImpl createPlayer(@NonNull Struct struct) throws IOException {
         var playerStruct = ProtoStruct.deserialize(struct, PlayerStruct.class);
         var player = new PlayerImpl(playerStruct.uuid);
-        player.update(playerStruct);
+        player.updatePlayer(playerStruct);
         return player;
     }
 
-    public static void update(@NonNull PlayerImpl player, @NonNull Struct struct) throws IOException {
+    public static void updatePlayer(@NonNull PlayerImpl player, @NonNull Struct struct) throws IOException {
         var playerStruct = ProtoStruct.deserialize(struct, PlayerStruct.class);
-        player.update(playerStruct);
+        player.updatePlayer(playerStruct);
     }
 
-    private void update(PlayerStruct playerStruct) {
+    private void updatePlayer(PlayerStruct playerStruct) {
         this.username = playerStruct.username;
         this.xuid = playerStruct.xuid;
         this.device = Device.getDeviceByName(playerStruct.device).orElse(null);
         this.currentServerId = playerStruct.currentServerId;
         this.currentClusterId = playerStruct.currentClusterId;
+    }
+
+    @Override
+    public boolean disconnect(@NonNull Component reason) {
+        return false;
+    }
+
+    @Override
+    public Optional<ConnectionStatus> send(@NonNull ProxyServer server) {
+        return Optional.empty();
     }
 
     @Override
@@ -74,8 +86,9 @@ public final class PlayerImpl implements ProxyPlayer {
     }
 
     @Override
-    public Optional<String> getXboxUniqueId() {
-        return Optional.ofNullable(this.xuid);
+    public Optional<Long> getXboxUniqueId() {
+        if (this.xuid == 0) return Optional.empty();
+        return Optional.of(this.xuid);
     }
 
     @Override
@@ -90,11 +103,13 @@ public final class PlayerImpl implements ProxyPlayer {
 
     @Override
     public Optional<ProxyServer> getCurrentServer() {
+        if (this.currentServerId.isEmpty()) return Optional.empty();
         return Cheetah.get().getServers().getById(this.currentServerId);
     }
 
     @Override
     public Optional<ProxyCluster> getCurrentCluster() {
+        if (this.currentClusterId.isEmpty()) return Optional.empty();
         return Cheetah.get().getClusters().getById(this.currentClusterId);
     }
 
