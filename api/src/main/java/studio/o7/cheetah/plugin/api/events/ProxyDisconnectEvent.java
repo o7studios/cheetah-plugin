@@ -1,5 +1,6 @@
 package studio.o7.cheetah.plugin.api.events;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -13,9 +14,11 @@ import java.util.Optional;
 @Getter
 public final class ProxyDisconnectEvent extends ProxyPlayerEvent {
     private static final HandlerList HANDLER_LIST = new HandlerList();
-    private final LoginStatus loginStatus;
 
-    public ProxyDisconnectEvent(@NonNull ProxyPlayer player, LoginStatus loginStatus) {
+    @SerializedName("login_status")
+    private final int loginStatus;
+
+    public ProxyDisconnectEvent(@NonNull ProxyPlayer player, int loginStatus) {
         super(player);
         this.loginStatus = loginStatus;
     }
@@ -29,18 +32,27 @@ public final class ProxyDisconnectEvent extends ProxyPlayerEvent {
         return HANDLER_LIST;
     }
 
+    public LoginStatus getLoginStatus() {
+        return LoginStatus.statusById(loginStatus).orElse(LoginStatus.SUCCESSFUL);
+    }
+
     @RequiredArgsConstructor
     @Getter
     public enum LoginStatus {
-        SUCCESSFUL("successful"),
-        CANCELED_BY_USER("canceled_by_user"),
-        CANCELED_BY_PROXY("canceled_by_proxy"),
-        CANCELED_BY_PLAYER_BEFORE_COMPLETE("canceled_by_player_before_complete");
+        SUCCESSFUL(0),
+        CANCELED_BY_USER(1),
+        CANCELED_BY_PROXY(2),
+        CANCELED_BY_PLAYER_BEFORE_COMPLETE(3);
 
-        private final String name;
+        private final int id;
 
-        public static Optional<LoginStatus> getStatusByName(@NonNull String name) {
-            return Arrays.stream(values()).filter(status -> status.name.equalsIgnoreCase(name)).findAny();
+        public static Optional<LoginStatus> statusById(int id) {
+            return Arrays.stream(values()).filter(status -> status.id == id).findAny();
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(id);
         }
     }
 }

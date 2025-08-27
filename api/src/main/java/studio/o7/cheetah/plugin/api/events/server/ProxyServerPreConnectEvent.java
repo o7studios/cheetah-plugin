@@ -1,5 +1,6 @@
 package studio.o7.cheetah.plugin.api.events.server;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.event.HandlerList;
@@ -19,9 +20,11 @@ public final class ProxyServerPreConnectEvent extends ProxyPlayerEvent {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
     @NonNull
+    @SerializedName("original_server")
     private final ProxyServer original;
 
     @Nullable
+    @SerializedName("previous_server")
     private final ProxyServer previousServer;
 
     @Nullable

@@ -1,11 +1,14 @@
 package studio.o7.cheetah.plugin.api.cluster;
 
+import com.google.gson.*;
 import lombok.NonNull;
+import studio.o7.cheetah.plugin.api.Cheetah;
 import studio.o7.cheetah.plugin.api.player.Blockage;
 import studio.o7.cheetah.plugin.api.player.ProxyPlayerCollection;
 import studio.o7.cheetah.plugin.api.server.ProxyServerCollection;
 import studio.o7.cheetah.plugin.api.utils.Labels;
 
+import java.lang.reflect.Type;
 import java.util.Optional;
 
 /**
@@ -27,4 +30,19 @@ public interface ProxyCluster {
     ProxyPlayerCollection getPlayers();
 
     Optional<Blockage> getBlock(@NonNull String id);
+
+    final class Adapter implements JsonSerializer<ProxyCluster>, JsonDeserializer<ProxyCluster> {
+
+        @Override
+        public ProxyCluster deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            var id = json.getAsString();
+            if (id.isEmpty()) return null;
+            return Cheetah.get().getClusters().getById(id).orElse(null);
+        }
+
+        @Override
+        public JsonElement serialize(ProxyCluster cluster, Type type, JsonSerializationContext jsonSerializationContext) {
+            return new JsonPrimitive(cluster.getId());
+        }
+    }
 }

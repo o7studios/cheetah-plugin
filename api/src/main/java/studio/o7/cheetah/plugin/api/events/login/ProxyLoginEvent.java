@@ -1,5 +1,6 @@
 package studio.o7.cheetah.plugin.api.events.login;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -16,6 +17,7 @@ public final class ProxyLoginEvent extends ProxyPlayerEvent {
 
     private final boolean denied;
     @NonNull
+    @SerializedName("reason_component")
     private Component reason;
 
     public ProxyLoginEvent(@NonNull ProxyPlayer player, boolean denied, @NonNull Component reason) {

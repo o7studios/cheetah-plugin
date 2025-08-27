@@ -1,5 +1,6 @@
 package studio.o7.cheetah.plugin.api.events;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.NonNull;
 import org.bukkit.event.HandlerList;
@@ -17,16 +18,13 @@ public final class ProxyPreTransferEvent extends ProxyPlayerEvent {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
     @NonNull
-    private final InetSocketAddress originalAddr;
-
-    @NonNull
+    @SerializedName("target_address")
     private InetSocketAddress targetAddr;
 
     private boolean denied = true;
 
-    public ProxyPreTransferEvent(@NonNull ProxyPlayer player, @NonNull InetSocketAddress originalAddr, @NonNull InetSocketAddress targetAddr, boolean denied) {
+    public ProxyPreTransferEvent(@NonNull ProxyPlayer player, @NonNull InetSocketAddress targetAddr, boolean denied) {
         super(player);
-        this.originalAddr = originalAddr;
         this.targetAddr = targetAddr;
         this.denied = denied;
     }

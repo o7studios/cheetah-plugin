@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -29,6 +30,7 @@ import java.util.UUID;
 
 public final class PlayerCollectionImpl implements ProxyPlayerCollection, org.bukkit.event.Listener {
     private static final Set<PlayerHolder> HOLDERS = new ObjectArraySet<>();
+    private static final PlayerEventsRegistry EVENTS_REGISTRY = new PlayerEventsRegistry();
 
     public PlayerCollectionImpl() {
         var plugin = JavaPlugin.getPlugin(CheetahPlugin.class);
@@ -60,6 +62,7 @@ public final class PlayerCollectionImpl implements ProxyPlayerCollection, org.bu
 
     @Getter
     private static final class PlayerHolder {
+        private final UUID uuid;
         private final WeakReference<PlayerImpl> playerRef;
         private final Listener listener;
 
@@ -78,11 +81,14 @@ public final class PlayerCollectionImpl implements ProxyPlayerCollection, org.bu
                     PlayerImpl.updatePlayer(player, object.getData());
                 }
             };
+            this.uuid = player.getUuid();
+            EVENTS_REGISTRY.registerPlayer(player);
             Octopus.get().registerListener(listener);
         }
 
         private void gc() {
             if (playerRef.get() != null) return;
+            EVENTS_REGISTRY.unregisterPlayer(uuid);
             HOLDERS.remove(this);
             Octopus.get().unregisterListener(listener);
         }

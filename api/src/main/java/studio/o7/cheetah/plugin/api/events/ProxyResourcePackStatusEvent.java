@@ -1,9 +1,9 @@
 package studio.o7.cheetah.plugin.api.events;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import net.kyori.adventure.resource.ResourcePackInfo;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
@@ -21,14 +21,17 @@ import java.util.Optional;
 public final class ProxyResourcePackStatusEvent extends ProxyPlayerEvent {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
+    @SerializedName("pack_status")
+    private final int status;
+
     @NonNull
-    private final PackStatus status;
-    @NonNull
+    @SerializedName("pack_info")
     private final ResourcePackInfo info;
 
+    @SerializedName("override_kick")
     private boolean overrideKick = false;
 
-    public ProxyResourcePackStatusEvent(@NonNull ProxyPlayer player, @NonNull PackStatus status, @NonNull ResourcePackInfo info, boolean overrideKick) {
+    public ProxyResourcePackStatusEvent(@NonNull ProxyPlayer player, int status, @NonNull ResourcePackInfo info, boolean overrideKick) {
         super(player);
         this.status = status;
         this.info = info;
@@ -54,22 +57,31 @@ public final class ProxyResourcePackStatusEvent extends ProxyPlayerEvent {
         this.overrideKick = overrideKick;
     }
 
+    public PackStatus getStatus() {
+        return PackStatus.statusById(this.status).orElse(PackStatus.DECLINED_RESPONSE);
+    }
+
     @RequiredArgsConstructor
     @Getter
     public enum PackStatus {
-        SUCCESSFUL_RESPONSE("successful"),
-        DECLINED_RESPONSE("declined"),
-        FAILED_DOWNLOAD_RESPONSE("failed_download"),
-        ACCEPTED_RESPONSE("accepted"),
-        DOWNLOADED_RESPONSE("downloaded"),
-        INVALID_URL_RESPONSE("invalid_url"),
-        FAILED_TO_RELOAD_RESPONSE("failed_reload"),
-        DISCARDED_RESPONSE("discarded");
+        DECLINED_RESPONSE(0),
+        SUCCESSFUL_RESPONSE(1),
+        FAILED_DOWNLOAD_RESPONSE(2),
+        ACCEPTED_RESPONSE(3),
+        DOWNLOADED_RESPONSE(4),
+        INVALID_URL_RESPONSE(5),
+        FAILED_TO_RELOAD_RESPONSE(6),
+        DISCARDED_RESPONSE(7);
 
-        private final String name;
+        private final int id;
 
-        public static Optional<PackStatus> getStatusByName(@NonNull String name) {
-            return Arrays.stream(values()).filter(status -> status.name.equalsIgnoreCase(name)).findAny();
+        public static Optional<PackStatus> statusById(int id) {
+            return Arrays.stream(values()).filter(status -> status.id == id).findAny();
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(id);
         }
     }
 }

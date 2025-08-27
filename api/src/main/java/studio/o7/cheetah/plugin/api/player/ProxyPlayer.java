@@ -1,11 +1,14 @@
 package studio.o7.cheetah.plugin.api.player;
 
+import com.google.gson.*;
 import lombok.NonNull;
 import net.kyori.adventure.text.Component;
+import studio.o7.cheetah.plugin.api.Cheetah;
 import studio.o7.cheetah.plugin.api.cluster.ProxyCluster;
 import studio.o7.cheetah.plugin.api.player.bedrock.Device;
 import studio.o7.cheetah.plugin.api.server.ProxyServer;
 
+import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
@@ -66,4 +69,35 @@ public interface ProxyPlayer {
      * from clusters of this {@link ProxyPlayer}.
      */
     Collection<Blockage> getBlockages();
+
+    final class Adapter implements JsonSerializer<ProxyPlayer>, JsonDeserializer<ProxyPlayer> {
+
+        @Override
+        public ProxyPlayer deserialize(JsonElement json, Type type, JsonDeserializationContext jsonDeserializationContext) throws JsonParseException {
+            var object = json.getAsJsonObject();
+
+            if (object.has("uuid")) {
+                var uuid = UUID.fromString(object.get("uuid").getAsString());
+                var player = Cheetah.get().getPlayers().getByUniqueId(uuid).orElse(null);
+                if (player != null) return player;
+            }
+            if (object.has("name")) {
+                var player = Cheetah.get().getPlayers().getByName(object.get("name").getAsString()).orElse(null);
+                if (player != null) return player;
+            }
+            if (object.has("xuid")) {
+                return Cheetah.get().getPlayers().getByXboxUniqueId(object.get("xuid").getAsLong()).orElse(null);
+            }
+            return null;
+        }
+
+        @Override
+        public JsonElement serialize(ProxyPlayer player, Type type, JsonSerializationContext jsonSerializationContext) {
+            var object = new JsonObject();
+            object.addProperty("uuid", player.getUniqueId().toString());
+            object.addProperty("name", player.getUsername());
+            player.getXboxUniqueId().ifPresent(xuid -> object.addProperty("xuid", xuid));
+            return object;
+        }
+    }
 }
