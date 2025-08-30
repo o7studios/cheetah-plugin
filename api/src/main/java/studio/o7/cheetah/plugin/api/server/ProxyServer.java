@@ -9,24 +9,50 @@ import studio.o7.cheetah.plugin.api.utils.Labels;
 import java.lang.reflect.Type;
 import java.util.Optional;
 
+
 /**
- * {@link ProxyServer} represents a Minecraft server (possibly inside
- * a cluster).
- * @apiNote An instance of this class might exist even if the server
- * is already dead. It's recommended to only hold references of
- * this {@link ProxyServer} instance by referencing the id from
- * {@link ProxyServer#getId}
+ * Represents a Minecraft server, which may optionally belong to a {@link ProxyCluster}.
+ * <p>
+ * A {@code ProxyServer} object may remain accessible even if the underlying server
+ * has already shut down or been removed. For long-term references, it is recommended
+ * to store and use the server identifier obtained via {@link ProxyServer#getId()}
+ * instead of holding onto the {@code ProxyServer} instance itself.
+ * </p>
  */
 public interface ProxyServer {
 
+    /**
+     * Returns the unique identifier of this server.
+     *
+     * @return the server ID
+     */
     String getId();
 
+    /**
+     * Returns the labels associated with this server.
+     *
+     * @return the labels
+     */
     Labels getLabels();
 
+    /**
+     * Returns the cluster this server belongs to, if any.
+     *
+     * @return an optional cluster
+     */
     Optional<ProxyCluster> getCluster();
 
+    /**
+     * Returns the collection of players currently connected to this server.
+     *
+     * @return the player collection
+     */
     ProxyPlayerCollection getPlayers();
 
+    /**
+     * Gson adapter for serializing and deserializing {@link ProxyServer} objects
+     * by their identifier.
+     */
     final class Adapter implements JsonSerializer<ProxyServer>, JsonDeserializer<ProxyServer> {
 
         @Override

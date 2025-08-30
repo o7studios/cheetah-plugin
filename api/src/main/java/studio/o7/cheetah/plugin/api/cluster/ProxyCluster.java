@@ -12,25 +12,59 @@ import java.lang.reflect.Type;
 import java.util.Optional;
 
 /**
- * {@link ProxyCluster} represents a namespace of Cheetah instances
- * and associated Minecraft servers on a Kubernetes cluster.
- * @apiNote An instance of this class might exist even if the cluster
- * is already dead. It's recommended to only hold references
- * of this {@link ProxyCluster} instance by referencing
- * the id from {@link ProxyCluster#getId}.
+ * Represents a namespace of Cheetah instances and associated Minecraft servers
+ * running on a Kubernetes cluster.
+ * <p>
+ * A {@code ProxyCluster} object may still be accessible even if the actual cluster
+ * no longer exists. For long-term references, it is recommended to store and use
+ * the cluster identifier obtained via {@link ProxyCluster#getId()} rather than
+ * keeping the {@code ProxyCluster} instance itself.
+ * </p>
  */
 public interface ProxyCluster {
 
+    /**
+     * Returns the unique identifier of this cluster.
+     *
+     * @return the cluster ID
+     */
     String getId();
 
+    /**
+     * Returns the labels associated with this cluster.
+     *
+     * @return the labels
+     */
     Labels getLabels();
 
+    /**
+     * Returns the collection of proxy servers belonging to this cluster.
+     *
+     * @return the server collection
+     */
     ProxyServerCollection getServers();
 
+    /**
+     * Returns the collection of proxy players connected to this cluster.
+     *
+     * @return the player collection
+     */
     ProxyPlayerCollection getPlayers();
 
+
+    /**
+     * Retrieves a blockage definition by its identifier, if present.
+     *
+     * @param id the blockage identifier
+     * @return an optional blockage
+     */
     Optional<Blockage> getBlock(@NonNull String id);
 
+
+    /**
+     * Gson adapter for serializing and deserializing {@link ProxyCluster} objects
+     * by their identifier.
+     */
     final class Adapter implements JsonSerializer<ProxyCluster>, JsonDeserializer<ProxyCluster> {
 
         @Override
