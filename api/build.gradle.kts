@@ -1,5 +1,6 @@
 dependencies {
-    compileOnlyApi("studio.o7:octopus-plugin-api:1.0.6")
+    compileOnlyApi(libs.paper)
+    compileOnly(libs.octopus)
 }
 
 information {
