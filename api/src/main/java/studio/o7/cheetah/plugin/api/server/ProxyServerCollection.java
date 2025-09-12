@@ -27,4 +27,6 @@ public interface ProxyServerCollection extends Collection<ProxyServer> {
      * @return an optional server with the given id
      */
     Optional<ProxyServer> getById(@NonNull String id);
+
+    ProxyServer getThis();
 }

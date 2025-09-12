@@ -5,6 +5,7 @@ import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -21,20 +22,28 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 
+@Slf4j
 public final class ServerCollectionImpl implements ProxyServerCollection {
     private static final Set<ServerHolder> HOLDERS = new ObjectArraySet<>();
 
+    private static ServerImpl localInstance;
+
     public ServerCollectionImpl() {
         var plugin = JavaPlugin.getPlugin(CheetahPlugin.class);
-        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, task ->
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, _ ->
                 new ObjectArraySet<>(HOLDERS).forEach(ServerHolder::gc), 20, 100);
+
+        var octopus = Octopus.get();
         var listener = new Listener("cheetah.server.*", 0) {
             @SneakyThrows
             @Override
             public void onCall(studio.o7.octopus.sdk.gen.api.v1.@NonNull Object obj) {
                 var server = ServerImpl.create(obj.getData());
                 var holder = getByID(server.getId());
-                if (holder == null) return;
+                if (holder == null) {
+                    holder = new ServerHolder(obj.getData());
+                    HOLDERS.add(holder);
+                }
                 var serverRef = holder.serverRef.get();
                 if (serverRef == null) {
                     holder.gc();
@@ -43,7 +52,15 @@ public final class ServerCollectionImpl implements ProxyServerCollection {
                 ServerImpl.update(serverRef, obj.getData());
             }
         };
-        Octopus.get().registerListener(listener);
+        octopus.registerListener(listener);
+        log.debug("Server update listener registered");
+
+        localInstance = new ServerImpl(CheetahPlugin.POD_NAME);
+        octopus.call(studio.o7.octopus.sdk.gen.api.v1.Object.newBuilder()
+                        .setData(localInstance.toStruct())
+                        .setKey("cheetah.server." + localInstance.getId())
+                .build());
+        log.debug("Local server instance published");
     }
 
     @Getter
@@ -53,11 +70,14 @@ public final class ServerCollectionImpl implements ProxyServerCollection {
         private ServerHolder(@NonNull Struct struct) throws IOException {
             var server = ServerImpl.create(struct);
             this.serverRef = new WeakReference<>(server);
-
+            if (!server.getId().equalsIgnoreCase(CheetahPlugin.POD_NAME)) return;
+            log.debug("Local server instance registered");
+            localInstance = serverRef.get();
         }
 
         private void gc() {
             if (serverRef.get() != null) return;
+            log.debug("Server GC triggered");
             HOLDERS.remove(this);
         }
 
@@ -105,6 +125,11 @@ public final class ServerCollectionImpl implements ProxyServerCollection {
     }
 
     @Override
+    public ProxyServer getThis() {
+        return localInstance;
+    }
+
+    @Override
     public int size() {
         return HOLDERS.size();
     }
@@ -140,32 +165,32 @@ public final class ServerCollectionImpl implements ProxyServerCollection {
     }
 
     @Override
-    public boolean add(ProxyServer proxyCluster) {
+    public boolean add(ProxyServer proxyCluster) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Immutable collection");
     }
 
     @Override
-    public boolean remove(Object o) {
+    public boolean remove(Object o) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Immutable collection");
     }
 
     @Override
-    public boolean addAll(@NotNull Collection<? extends ProxyServer> c) {
+    public boolean addAll(@NotNull Collection<? extends ProxyServer> c) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Immutable collection");
     }
 
     @Override
-    public boolean removeAll(@NotNull Collection<?> c) {
+    public boolean removeAll(@NotNull Collection<?> c) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Immutable collection");
     }
 
     @Override
-    public boolean retainAll(@NotNull Collection<?> c) {
+    public boolean retainAll(@NotNull Collection<?> c) throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Immutable collection");
     }
 
     @Override
-    public void clear() {
+    public void clear() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("Immutable collection");
     }
 }

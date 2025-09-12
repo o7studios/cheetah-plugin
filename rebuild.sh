@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 API_PORT=6550
@@ -43,14 +43,81 @@ if ! kubectl get secret ghcr-secret >/dev/null 2>&1; then
   echo "✅ Created secret for docker-registry on K3d cluster $TEST_CLUSTER_NAME."
 fi
 
+if ! helm list -n agones-system | grep -q agones; then
+  echo "📦 Agones not installed on K3d cluster $TEST_CLUSTER_NAME. Installing it..."
+  helm repo add agones https://agones.dev/chart/stable
+  helm repo update
+  helm install agones --namespace agones-system --create-namespace agones/agones
+  echo "✅ Agones installed on K3d cluster $TEST_CLUSTER_NAME."
+  sleep 3s
+  echo "⏳ Waiting until Agones is ready on K3d cluster $TEST_CLUSTER_NAME..."
+  kubectl wait --for=condition=Ready pod -l app=agones -n agones-system --timeout=300s
+  echo "✅ Agones is ready on K3d cluster $TEST_CLUSTER_NAME."
+fi
+
+if ! kubectl get secret octopus-ca-cert >/dev/null 2>&1; then
+  echo "🔐 Creating CA secret..."
+  CA_KEY=$(openssl genrsa 4096)
+  CA_CRT=$(echo "$CA_KEY" | \
+    openssl req -x509 -new -nodes -key /dev/stdin -sha256 -days 3650 -subj "/CN=Octopus-CA")
+
+  kubectl create secret generic octopus-ca-cert \
+    --from-literal=ca.crt="$CA_CRT"
+
+  echo "✅ Created secret octopus-ca-cert"
+fi
+
+if ! kubectl get secret octopus-server-cert >/dev/null 2>&1; then
+  echo "🔐 Creating server cert secret..."
+  SERVER_KEY=$(openssl genrsa 4096)
+
+  SERVER_CSR=$(echo "$SERVER_KEY" | openssl req -new -key /dev/stdin -subj "/CN=octopus" \
+    -addext "subjectAltName=DNS:octopus,DNS:octopus.default.svc.cluster.local,IP:127.0.0.1")
+
+  SERVER_CRT=$(echo "$SERVER_CSR" | openssl x509 -req \
+    -CA <(echo "$CA_CRT") \
+    -CAkey <(echo "$CA_KEY") \
+    -CAserial <(echo 01) \
+    -days 365 -sha256 \
+    -extfile <(printf "subjectAltName=DNS:octopus,DNS:octopus.default.svc.cluster.local,IP:127.0.0.1"))
+
+  kubectl create secret generic octopus-server-cert \
+    --from-literal=server.key="$SERVER_KEY" \
+    --from-literal=server.crt="$SERVER_CRT"
+
+
+  echo "✅ Created secret octopus-server-cert"
+fi
+
+if ! kubectl get secret octopus-client-cert >/dev/null 2>&1; then
+  echo "🔐 Creating client cert secret..."
+  CLIENT_KEY=$(openssl genrsa 4096)
+
+  CLIENT_CSR=$(echo "$CLIENT_KEY" | openssl req -new -key /dev/stdin -subj "/CN=octopus-client" \
+    -addext "subjectAltName=DNS:octopus-client")
+
+  CLIENT_CRT=$(echo "$CLIENT_CSR" | openssl x509 -req \
+    -CA <(echo "$CA_CRT") \
+    -CAkey <(echo "$CA_KEY") \
+    -CAserial <(echo 01) \
+    -days 365 -sha256 \
+    -extfile <(printf "subjectAltName=DNS:octopus-client"))
+
+  kubectl create secret generic octopus-client-cert \
+    --from-literal=client.key="$CLIENT_KEY" \
+    --from-literal=client.crt="$CLIENT_CRT"
+
+  echo "✅ Created secret octopus-client-cert"
+fi
+
 if ! helm list | grep -q octopus; then
   echo "📦 Octopus not installed on K3d cluster $TEST_CLUSTER_NAME. Installing it..."
   echo $GITHUB_TOKEN | helm registry login ghcr.io -u $GITHUB_USERNAME --password-stdin
-  helm install octopus oci://ghcr.io/o7studios/octopus-chart --set tls.disabled=true
+  helm install octopus oci://ghcr.io/o7studios/charts/octopus
   echo "✅ Octopus installed on K3d cluster $TEST_CLUSTER_NAME."
   sleep 3s
   echo "⏳ Waiting until Octopus is ready on K3d cluster $TEST_CLUSTER_NAME..."
-  kubectl wait --for=condition=Ready pod -l app.kubernetes.io/instance=octopus-chart --timeout=240s
+  kubectl wait --for=condition=Ready pod -l app.kubernetes.io/instance=octopus --timeout=240s
   echo "✅ Octopus is ready on K3d cluster $TEST_CLUSTER_NAME."
 fi
 

@@ -7,29 +7,24 @@ import studio.o7.cheetah.plugin.api.server.ProxyServerCollection;
 import studio.o7.cheetah.plugin.cluster.ClusterCollectionImpl;
 import studio.o7.cheetah.plugin.player.PlayerCollectionImpl;
 import studio.o7.cheetah.plugin.server.ServerCollectionImpl;
-import studio.o7.octopus.plugin.api.Octopus;
 
 public final class CheetahImpl implements Cheetah {
-    public static final PlayerCollectionImpl PLAYER_COLLECTION = new PlayerCollectionImpl();
-    public static final ServerCollectionImpl SERVER_COLLECTION = new ServerCollectionImpl();
-    public static final ClusterCollectionImpl CLUSTER_COLLECTION = new ClusterCollectionImpl();
-
-    public CheetahImpl() {
-
-    }
+    public static final PlayerCollectionImpl ONLINE_PLAYERS = new PlayerCollectionImpl();
+    public static final ServerCollectionImpl SERVERS = new ServerCollectionImpl();
+    public static final ClusterCollectionImpl CLUSTERS = new ClusterCollectionImpl();
 
     @Override
     public ProxyPlayerCollection getPlayers() {
-        return PLAYER_COLLECTION;
+        return ONLINE_PLAYERS;
     }
 
     @Override
     public ProxyServerCollection getServers() {
-        return SERVER_COLLECTION;
+        return SERVERS;
     }
 
     @Override
     public ProxyClusterCollection getClusters() {
-        return CLUSTER_COLLECTION;
+        return CLUSTERS;
     }
 }

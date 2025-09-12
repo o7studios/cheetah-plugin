@@ -24,17 +24,31 @@ spec:
         cheetah.o7.studio/app: minecraft
         cheetah.o7.studio/fallback: "true"
     spec:
+      serviceAccountName: cheetah-account
       containers:
         - name: ctest
           image: ctest:latest
           imagePullPolicy: "Never"
           env:
-            - name: "OCTOPUS_ENVIRONMENT"
-              value: "dev"
             - name: "OCTOPUS_HOST"
               value: "octopus"
             - name: "OCTOPUS_PORT"
               value: "50051"
+            - name: "OCTOPUS_CLIENT_CERT"
+              valueFrom:
+                secretKeyRef:
+                  name: "octopus-client-cert"
+                  key: client.crt
+            - name: "OCTOPUS_CLIENT_KEY"
+              valueFrom:
+                secretKeyRef:
+                  name: "octopus-client-cert"
+                  key: client.key
+            - name: "OCTOPUS_CA_CERT"
+              valueFrom:
+                secretKeyRef:
+                  name: "octopus-ca-cert"
+                  key: ca.crt
           volumeMounts:
             - name: floodgate
               mountPath: /paper/plugins/floodgate/key.pem
@@ -46,4 +60,4 @@ spec:
       volumes:
         - name: floodgate
           secret:
-            secretName: geyser-floodgate
+            secretName: cheetah-floodgate

@@ -19,6 +19,7 @@ import studio.o7.octopus.sdk.structs.ProtoStruct;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -115,6 +116,6 @@ public final class PlayerImpl implements ProxyPlayer {
 
     @Override
     public Collection<Blockage> getBlockages() {
-        return this.blockages;
+        return Collections.unmodifiableCollection(blockages);
     }
 }

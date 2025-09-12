@@ -1,11 +1,14 @@
+import com.github.spotbugs.snom.SpotBugsPlugin
 import studio.o7.remora.RemoraPlugin
 
 plugins {
     id("studio.o7.remora") version "0.2.9"
+    id("com.github.spotbugs") version "6.0.22"
 }
 
 allprojects {
     apply<RemoraPlugin>()
+    apply<SpotBugsPlugin>()
 
     group = "studio.o7"
 
@@ -14,7 +17,9 @@ allprojects {
         maven("https://repo.opencollab.dev/main/")
     }
 
-    dependencies {
-        compileOnly("io.papermc.paper:paper-api:1.21.8-R0.1-SNAPSHOT")
+    spotbugs {
+        toolVersion.set("4.9.0")
+        effort.set(com.github.spotbugs.snom.Effort.MAX)
+        reportLevel.set(com.github.spotbugs.snom.Confidence.DEFAULT)
     }
 }
