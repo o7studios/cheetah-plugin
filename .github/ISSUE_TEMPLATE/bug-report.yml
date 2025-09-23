@@ -46,7 +46,7 @@ body:
       value: |
         Before submitting, please double-check:
 
-        1. You are using the most recent releases of Octopus, the Octopus plugin, Velocity and the Velocity plugin.  
+        1. You are using the most recent releases of Octopus, the Octopus plugin, Cheetah and the Cheetah plugin.  
         2. You’ve searched existing issues to confirm this hasn’t already been reported.  
 
         Not sure if it’s a bug? Feel free to ask in the `#code` channel on our
