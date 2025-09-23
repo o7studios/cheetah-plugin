@@ -2,6 +2,7 @@ name: Bug Report
 description: Use this form to report issues where Cheetah isn’t behaving as expected.
 title: "bug: "
 type: "Bug"
+projects: ["o7studios/3"]
 body:
   - type: textarea
     attributes:
