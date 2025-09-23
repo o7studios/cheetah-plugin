@@ -3,6 +3,7 @@ description: Use this form to report issues where Cheetah isn’t behaving as ex
 title: "bug: "
 type: "Bug"
 projects: ["o7studios/3"]
+labels: ["extern"]
 body:
   - type: textarea
     attributes:
