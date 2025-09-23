@@ -1,0 +1,53 @@
+name: Bug Report
+description: Use this form to report issues where Cheetah isn’t behaving as expected.
+title: "bug: "
+type: "Bug"
+body:
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: Explain what you thought should happen.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Observed Behavior
+      description: Describe what actually occurs instead.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: How to Reproduce
+      description: Provide clear steps, examples, or other details so we can reproduce the issue.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Helm List Output
+      description: |
+        Paste the complete, unmodified output of `helm list` (from every affected cluster, including those with Octopus)
+        OR the version numbers of all Cheetah-related components.  
+        Please avoid terms like *"latest"*. Provide text output, not screenshots.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Extra Details
+      description: Add any additional context, logs, or information that might help.
+    validations:
+      required: false
+
+  - type: markdown
+    attributes:
+      value: |
+        Before submitting, please double-check:
+
+        1. You are using the most recent releases of Octopus, the Octopus plugin, Velocity and the Velocity plugin.  
+        2. You’ve searched existing issues to confirm this hasn’t already been reported.  
+
+        Not sure if it’s a bug? Feel free to ask in the `#code` channel on our
+        [Discord](https://discord.o7.studio).
