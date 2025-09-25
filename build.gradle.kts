@@ -18,7 +18,7 @@ allprojects {
     }
 
     spotbugs {
-        toolVersion.set("4.9.0")
+        toolVersion.set("4.9.6")
         effort.set(com.github.spotbugs.snom.Effort.MAX)
         reportLevel.set(com.github.spotbugs.snom.Confidence.DEFAULT)
     }
