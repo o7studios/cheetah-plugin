@@ -3,7 +3,7 @@ import studio.o7.remora.RemoraPlugin
 
 plugins {
     id("studio.o7.remora") version "0.3.6"
-    id("com.github.spotbugs") version "6.0.22"
+    id("com.github.spotbugs") version "6.4.2"
 }
 
 allprojects {
