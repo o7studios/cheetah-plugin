@@ -10,7 +10,7 @@ main: "studio.o7.cheetah.plugin.CheetahPlugin"
 load: "STARTUP"
 
 depend:
-  - Octopus
+  - octopus
   - floodgate
 
 permissions:
