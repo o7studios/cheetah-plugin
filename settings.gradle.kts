@@ -5,7 +5,7 @@ dependencyResolutionManagement {
         create("libs") {
             version("paper", "1.21.8-R0.1-SNAPSHOT")
             version("floodgate", "2.2.4-SNAPSHOT")
-            version("k8s", "24.0.0-legacy")
+            version("k8s", "24.0.0")
             version("octopus", "1.0.10")
 
             library("paper", "io.papermc.paper", "paper-api").versionRef("paper")
