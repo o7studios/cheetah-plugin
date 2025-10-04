@@ -4,6 +4,25 @@ set -e
 API_PORT=6550
 API_HOST=host.docker.internal
 
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    --delete)
+      echo "🗑 Deleting cluster $TEST_CLUSTER_NAME..."
+      k3d cluster delete "$TEST_CLUSTER_NAME" || true
+      exit 0
+      ;;
+    --recreate)
+      echo "🔄 Recreating cluster $TEST_CLUSTER_NAME..."
+      k3d cluster delete "$TEST_CLUSTER_NAME" || true
+      ;;
+    *)
+      echo "❓ Unknown parameter: $1"
+      exit 1
+      ;;
+  esac
+  shift
+done
+
 if ! k3d cluster list | grep -qw "$TEST_CLUSTER_NAME"; then
   echo "🔧 K3d cluster $TEST_CLUSTER_NAME not found. Creating it..."
   k3d cluster create "$TEST_CLUSTER_NAME" --api-port "$API_PORT" -p "25565:25565@loadbalancer" -p "19132:19132/udp@loadbalancer"
@@ -27,6 +46,8 @@ kubectl config set-cluster k3d-"$TEST_CLUSTER_NAME" \
   --insecure-skip-tls-verify=true
 
 kubectl config use-context k3d-"$TEST_CLUSTER_NAME"
+
+pids=()
 
 if ! kubectl get secret github-token >/dev/null 2>&1; then
   echo "🔐 Creating secret for github-token on K3d cluster $TEST_CLUSTER_NAME..."
