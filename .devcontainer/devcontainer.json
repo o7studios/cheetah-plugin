@@ -1,5 +1,5 @@
 {
-  "name": "Cheetah plugin",
+  "name": "o7studios/cheetah-plugin",
   "image": "ubuntu:latest",
   "customizations" : {
     "jetbrains" : {
@@ -15,17 +15,9 @@
     "ghcr.io/devcontainers/features/docker-outside-of-docker:1": {},
     "ghcr.io/rio/features/k3d:1": {},
     "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {},
-    "ghcr.io/devcontainers/features/java:1": {
-      "version": "23",
-      "installGradle": true
-    }
+    "ghcr.io/devcontainers/features/java:1": {"version": "23", "installGradle": true}
   },
-  "runArgs": [
-    "--add-host=host.docker.internal:host-gateway",
-    "--env-file=${localEnv:HOME}/dev.env"
-  ],
-  "containerEnv": {
-    "TEST_CLUSTER_NAME": "o7-test-cluster"
-  },
+  "runArgs": ["--add-host=host.docker.internal:host-gateway", "--env-file=${localEnv:HOME}/dev.env"],
+  "containerEnv": {"TEST_CLUSTER_NAME": "o7-test-cluster"},
   "remoteUser": "ubuntu"
 }
